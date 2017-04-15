@@ -1,11 +1,17 @@
 package models;
 
-import java.util.Date;
-
 public class User {
 	String uname, password, email;
+	int id;
 	boolean admin;
-	Date registeredon;
+
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public boolean isAdmin() {
 		return admin;
@@ -37,14 +43,6 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public Date getRegisteredon() {
-		return registeredon;
-	}
-
-	public void setRegisteredon(Date registeredon) {
-		this.registeredon = registeredon;
 	}
 
 }

@@ -23,9 +23,6 @@ public class UserDao {
 			if(rs.next()){
 				return true;
 			}
-			else {
-				return false;
-			}
 		} catch (SQLException e) {
 		 System.out.println("Error in checkUser() -->" + e.getMessage());
 		}
@@ -43,6 +40,7 @@ public class UserDao {
                 ps.setString(3, user.getEmail());            
                 ps.executeUpdate();
                 System.out.println("User added");
+                signIn(user.getEmail(), user.getPassword());
         	} catch (SQLException e) {
        		 System.out.println("Error in addUser() -->" + e.getMessage());
         	}
@@ -76,11 +74,11 @@ public class UserDao {
 				User user = new User();
 				user.setEmail(rs.getString("email"));
 				user.setUname(rs.getString("uname"));
+				user.setId(rs.getInt("id"));
 				return user;
 			}
 			else {
 				System.out.println("Sign In Failed");
-				return null;
 			}
 		} catch (SQLException e) {
 			// TODO: handle exception
@@ -88,6 +86,22 @@ public class UserDao {
 
 		}
 		return null;
+	}
+	
+	public User getById(int id){
+		User user = new User();
+		try {
+			PreparedStatement ps = connection.prepareStatement("select * from users where id = ?");
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			user.setEmail(rs.getString("email"));
+			user.setUname(rs.getString("uname"));
+			user.setId(rs.getInt("id"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return user;
 	}
  
 

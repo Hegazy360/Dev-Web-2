@@ -2,7 +2,7 @@ package models;
 
 public class Comments {
 	User author;
-	Posts post;
+	Post post;
 	String title,content;
 	public User getAuthor() {
 		return author;
@@ -10,10 +10,10 @@ public class Comments {
 	public void setAuthor(User author) {
 		this.author = author;
 	}
-	public Posts getPost() {
+	public Post getPost() {
 		return post;
 	}
-	public void setPost(Posts post) {
+	public void setPost(Post post) {
 		this.post = post;
 	}
 	public String getTitle() {

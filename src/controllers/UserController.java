@@ -1,9 +1,6 @@
 package controllers;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -40,15 +37,16 @@ public class UserController extends HttpServlet {
 		String forward = "";
 		String action = request.getParameter("action");
 		
-		if(action.equals("new")){
+		if(action != null && action.equals("new")){
 			System.out.println("OK");
 			forward = "/WEB-INF/signup.jsp";
 		}
-		else if(action.equals("signin")){
+		else if(action != null && action.equals("signin")){
 			forward = "/WEB-INF/signin.jsp";
 		}
 		else {
-			forward = "/WEB-INF/profile.jsp";
+			System.out.println("here");
+			forward = "/home";
 		}
 		RequestDispatcher view = request.getRequestDispatcher(forward);
 		view.forward(request, response);
@@ -65,8 +63,6 @@ public class UserController extends HttpServlet {
 			user.setUname(request.getParameter("uname"));
 			user.setPassword(request.getParameter("pass"));
 			user.setEmail(request.getParameter("email"));
-	        String userid = request.getParameter("uname");
-	        user.setUname(userid);
 	        dao.addUser(user);
 		}
 		else if(request.getParameter("submitSignInForm") != null) {
@@ -74,10 +70,10 @@ public class UserController extends HttpServlet {
 			user = dao.signIn(request.getParameter("email"),request.getParameter("password"));
 		}
 		
-        RequestDispatcher view = request.getRequestDispatcher("/WEB-INF/home.jsp");
-        request.setAttribute("user", user);
-        session.setAttribute("user", user);
-        view.forward(request, response);
+        if(user != null){
+            session.setAttribute("user", user);
+        }
+        response.sendRedirect("home");
         
         
 	}
