@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import models.Posts;
+import models.Post;
 import models.User;
 import util.Database;
 
@@ -15,7 +15,7 @@ public class PostsDao {
 		connection = Database.getConnection();
 	}
 
-	public void addPost(Posts post) {
+	public void addPost(Post post) {
 
 	}
 
@@ -23,7 +23,7 @@ public class PostsDao {
 
 	}
 
-	public void updatePost(Posts post) {
+	public void updatePost(Post post) {
 
 	}
 

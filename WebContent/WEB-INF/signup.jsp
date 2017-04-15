@@ -1,6 +1,6 @@
 <% String title="New User"; %>
 <%@ include file="partials/header.jsp" %>
-        <form method="POST" action='UserController' name="signUpForm">
+        <form method="POST" action='user' name="signUpForm">
             <% String action = request.getParameter("action");
                 System.out.println(action+"signup");
             %>

@@ -2,7 +2,7 @@ package models;
 
 import java.util.Date;
 
-public class Posts {
+public class Post {
 	User author;
 	String title, content;
 	Date datePost, dateLastModify;
