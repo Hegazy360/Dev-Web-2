@@ -3,7 +3,7 @@
 Users Table Query :
 ----------------
 
-```CREATE TABLE `users` (
+CREATE TABLE `users` (
 
   `id` int(11) NOT NULL AUTO_INCREMENT,
   
@@ -15,7 +15,7 @@ Users Table Query :
   
   PRIMARY KEY (`id`)
   
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1```
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1
 
 
   
