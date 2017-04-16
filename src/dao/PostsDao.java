@@ -8,15 +8,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.Group;
+import models.Comment;
 import models.Post;
 import util.Database;
 
 public class PostsDao {
 	private Connection connection;
+	private UserDao userDao;
 
 	public PostsDao() {
 		connection = Database.getConnection();
+		userDao = new UserDao();
+		
 	}
 
 	public boolean createPost(Post post) {
@@ -88,6 +91,45 @@ public class PostsDao {
 			e.printStackTrace();
 		}
 		return post;
+	}
+	
+	public List<Comment> getPostComments(int id){
+		List<Comment> comments = new ArrayList<Comment>();
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery("select * from comments where post_id = "+id);
+			
+			while (rs.next()) {
+                Comment comment = new Comment();
+                comment.setId(rs.getInt("id"));
+                comment.setAuthor_id(rs.getInt("author_id"));
+                comment.setPost_id(rs.getInt("post_id"));
+                comment.setContent(rs.getString("content"));
+                comment.setUserName((userDao.getById(comment.getAuthor_id())).getUname());
+                comments.add(comment);
+            }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return comments;
+	}
+	
+	public boolean createComment(Comment comment){
+		try {
+			PreparedStatement ps = connection.prepareStatement("insert into comments(author_id,post_id,content) values(?,?,?)");
+      		ps.setInt(1, comment.getAuthor_id());
+            ps.setInt(2, comment.getPost_id());
+            ps.setString(3, comment.getContent()); 
+            int rows = ps.executeUpdate();
+            if(rows > 0){
+            	return true;
+            }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 

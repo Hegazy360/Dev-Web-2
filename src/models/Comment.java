@@ -1,10 +1,8 @@
 package models;
 
-import java.util.Date;
-
-public class Post {
-	int id,group_id,author_id;
-	String title,description,content,userName;
+public class Comment {
+	int id,author_id,post_id;
+	String content,userName;
 	
 	public int getId() {
 		return id;
@@ -12,29 +10,17 @@ public class Post {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getGroup_id() {
-		return group_id;
-	}
-	public void setGroup_id(int group_id) {
-		this.group_id = group_id;
-	}
 	public int getAuthor_id() {
 		return author_id;
 	}
 	public void setAuthor_id(int author_id) {
 		this.author_id = author_id;
 	}
-	public String getTitle() {
-		return title;
+	public int getPost_id() {
+		return post_id;
 	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
+	public void setPost_id(int post_id) {
+		this.post_id = post_id;
 	}
 	public String getContent() {
 		return content;
@@ -42,12 +28,11 @@ public class Post {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	
 	public String getUserName() {
 		return userName;
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
-
 }

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.PostsDao;
-import models.Group;
+import models.Comment;
 import models.Post;
 import models.User;
 
@@ -35,31 +35,36 @@ public class PostsController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String forward = "";
+		String forward = "/home";
 		String action = request.getParameter("action");
+		HttpSession session = request.getSession();
+		
 		int groupId = Integer.parseInt(request.getParameter("groupid"));
+		
+		if(session.getAttribute("user") != null){
 		if(action != null && action.equals("newpost")){
 			System.out.println(action);
 			forward = "/WEB-INF/new-post.jsp";
 		}
-		else { //post main page
+		else { //post show page
 			int postId = Integer.parseInt(request.getParameter("postid"));
 			if(postId > 0){
-			    forward = "/WEB-INF/post.jsp";
+			    forward = "/WEB-INF/show-post.jsp";
 				request.setAttribute("pageStyle", "home");
 				request.setAttribute("pageTitle", "Post");
 				//get post by id
 				Post post = postsDao.getPostById(groupId,postId);
+				List<Comment> comments = postsDao.getPostComments(postId);
+
 				if(post != null){
 					request.setAttribute("post", post);
+					request.setAttribute("comments", comments);
 				}
 				else {
 					forward = "/groups?groupid="+groupId;
 				}
 				
 		}
-		else {
-			forward = "/home";
 		}
 		}
 		RequestDispatcher view = request.getRequestDispatcher(forward);
@@ -72,17 +77,29 @@ public class PostsController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		Post post = new Post();
-		int groupId = 0;
-		if(request.getParameter("submitPostForm") != null){
-			groupId = Integer.parseInt(request.getParameter("groupid"));
+		String forward = "";
+		int groupId = Integer.parseInt(request.getParameter("groupid"));
+
+		if(request.getParameter("submitPostForm") != null){ //add new post
 			post.setTitle(request.getParameter("title"));
 			post.setDescription(request.getParameter("description"));
 			post.setContent(request.getParameter("content"));
 			post.setAuthor_id(((User) session.getAttribute("user")).getId());
 			post.setGroup_id(groupId);
 	        postsDao.createPost(post);
+			forward = "groups?groupid="+groupId;
 		}
-        response.sendRedirect("groups?groupid="+groupId);
+		else if(request.getParameter("submitCommentForm") != null) { //add comment to post
+			int postId = Integer.parseInt(request.getParameter("postid"));
+			Comment comment = new Comment();
+			comment.setAuthor_id(((User) session.getAttribute("user")).getId());
+			comment.setPost_id(postId);
+			comment.setContent(request.getParameter("content"));
+			postsDao.createComment(comment);
+			forward = "posts?groupid="+groupId+"&postid="+postId;
+
+		}
+        response.sendRedirect(forward);
 	}
 
 }

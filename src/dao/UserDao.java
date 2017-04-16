@@ -94,9 +94,11 @@ public class UserDao {
 			PreparedStatement ps = connection.prepareStatement("select * from users where id = ?");
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
-			user.setEmail(rs.getString("email"));
-			user.setUname(rs.getString("uname"));
-			user.setId(rs.getInt("id"));
+			while(rs.next()){
+				user.setEmail(rs.getString("email"));
+				user.setUname(rs.getString("uname"));
+				user.setId(rs.getInt("id"));
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
