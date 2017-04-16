@@ -38,7 +38,6 @@ public class HomeController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		String forward = "/WEB-INF/home.jsp";
 		request.setAttribute("pageStyle", "home");
 		request.setAttribute("pageTitle", "Home");

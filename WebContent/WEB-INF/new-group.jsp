@@ -10,7 +10,4 @@
             <input  type="submit" name ="submitGroupForm" value="Submit" />
         </form>
 
-
-
-
 <%@ include file="partials/footer.jsp" %>

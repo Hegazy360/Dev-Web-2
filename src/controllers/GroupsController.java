@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.GroupsDao;
+import dao.PostsDao;
 import models.Group;
+import models.Post;
 import models.User;
 
 /**
@@ -20,7 +23,8 @@ import models.User;
 @WebServlet("/GroupsController")
 public class GroupsController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    private GroupsDao dao;
+    private GroupsDao groupsDao;
+    private PostsDao postsDao;
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -28,7 +32,8 @@ public class GroupsController extends HttpServlet {
     public GroupsController() {
         super();
         // TODO Auto-generated constructor stub
-        dao = new GroupsDao();
+        groupsDao = new GroupsDao();
+        postsDao = new PostsDao();
 
     }
 
@@ -39,12 +44,36 @@ public class GroupsController extends HttpServlet {
 		// TODO Auto-generated method stub
 		String forward = "";
 		String action = request.getParameter("action");
-		
+		int groupId = Integer.parseInt(request.getParameter("groupid"));
 		if(action != null && action.equals("newgroup")){
 			System.out.println(action);
 			forward = "/WEB-INF/new-group.jsp";
 		}
+		else { //group main page
+			if(groupId > 0){
+				    forward = "/WEB-INF/group.jsp";
+					request.setAttribute("pageStyle", "home");
+					request.setAttribute("pageTitle", "Group");
+					//get group by id
+					Group group = groupsDao.getGroupById(groupId);
+					if(group != null){
+						request.setAttribute("group", group);
+						//get all posts for this group
+						List<Post> posts = postsDao.getAllPosts(groupId);
+						request.setAttribute("posts", posts);	
+					}
+					else {
+						forward = "/home";
+					}
+					
+			}
+			else {
+				forward = "/home";
+			}
+		  
+		}
 
+		
 		RequestDispatcher view = request.getRequestDispatcher(forward);
 		view.forward(request, response);	}
 
@@ -59,7 +88,7 @@ public class GroupsController extends HttpServlet {
 			group.setTitle(request.getParameter("title"));
 			group.setDescription(request.getParameter("description"));
 			group.setCreator_id(((User) session.getAttribute("user")).getId());
-	        dao.createGroup(group);
+	        groupsDao.createGroup(group);
 		}
         response.sendRedirect("home");
 	}

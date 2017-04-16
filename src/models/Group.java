@@ -2,7 +2,15 @@ package models;
 
 public class Group {
 	String title,description;
-	int creator_id;
+	int id,creator_id;
+	
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getTitle() {
 		return title;
 	}
