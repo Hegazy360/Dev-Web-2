@@ -40,6 +40,8 @@ public class HomeController extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String forward = "/WEB-INF/home.jsp";
+		request.setAttribute("pageStyle", "home");
+		request.setAttribute("pageTitle", "Home");
 		List<Group> groups = dao.getAllGroups();
 		request.setAttribute("groups", groups);
 		RequestDispatcher view = request.getRequestDispatcher(forward);
