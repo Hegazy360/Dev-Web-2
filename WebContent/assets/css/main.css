@@ -1,0 +1,54 @@
+html, body {
+	padding: 0;
+	margin: 0;
+	background-color: #FAFAFA;
+	min-height:800px;
+	position: relative;
+}
+
+/*
+ #212121 black
+ #FAFAFA white
+ #D7CEC7 grain
+ #565656 blackboard
+ #76323F powder
+ #C09F80 tan
+*/
+body, div, p, a, span {
+	font-family: 'Open Sans', sans-serif;
+	color: #212121;
+}
+
+/*header and footer style*/
+.header,.footer {
+	width:100%;
+	background-color: #FAFAFA;
+	display: flex;
+	justify-content: space-between;
+	padding: 0px 20px;
+}
+/*header*/
+
+.header {
+  height: 50px;
+  box-shadow: 0px -4px 12px #212121;
+}
+.header .buttons {
+	width: 145px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.header .buttons a, .header .title {
+	display: inline-block;
+	font-size: 18px;
+	margin-top: 9px;
+}
+
+/*footer*/
+.footer {
+  position: absolute;
+  bottom:0;
+  height: 100px;
+  box-shadow: 0px 4px 12px #212121;
+}
