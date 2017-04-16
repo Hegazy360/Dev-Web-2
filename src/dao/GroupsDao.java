@@ -45,6 +45,7 @@ public class GroupsDao {
 			
 			while (rs.next()) {
                 Group group = new Group();
+				group.setId(rs.getInt("id"));
                 group.setTitle(rs.getString("title"));
                 group.setDescription(rs.getString("description"));
                 group.setCreator_id(rs.getInt("creator_id"));
@@ -55,5 +56,25 @@ public class GroupsDao {
 			e.printStackTrace();
 		}
 		return groups;
+	}
+
+	public Group getGroupById(int groupId) {
+		// TODO Auto-generated method stub
+		Group group = new Group();
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery("select * from groups where id = "+groupId);
+			while (rs.next()) {
+				group.setId(rs.getInt("id"));
+	            group.setTitle(rs.getString("title"));
+	            group.setDescription(rs.getString("description"));
+	            group.setCreator_id(rs.getInt("creator_id"));
+	        }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return group;
+
 	}
 }
