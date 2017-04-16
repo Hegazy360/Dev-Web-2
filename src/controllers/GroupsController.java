@@ -51,7 +51,7 @@ public class GroupsController extends HttpServlet {
 		}
 		else { //group main page
 			if(groupId > 0){
-				    forward = "/WEB-INF/group.jsp";
+				    forward = "/WEB-INF/show-group.jsp";
 					request.setAttribute("pageStyle", "home");
 					request.setAttribute("pageTitle", "Group");
 					//get group by id
