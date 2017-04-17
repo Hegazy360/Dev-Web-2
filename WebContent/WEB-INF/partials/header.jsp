@@ -20,7 +20,7 @@
 Test
         </div>
         <div class="buttons">
-          <a href = "user?action=signin">Sign In</a>
-          <a href = "user?action=new">Sign Up</a>
+          <a href = "user?action=signin">Log In</a>
+          <a href = "user?action=new" class="signup-btn">Sign Up</a>
         </div>
       </div>

@@ -1,4 +1,3 @@
-<% String title="New User"; %>
 <%@ include file="partials/header.jsp" %>
         <form method="POST" action='user' name="signUpForm">
             <% String action = request.getParameter("action");
