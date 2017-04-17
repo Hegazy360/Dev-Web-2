@@ -1,6 +1,6 @@
 <%@ include file="partials/header.jsp" %>
 
-        <form method="POST" action='user' name="signInForm">
+        <form method="POST" action='user' name="signInForm" id="signInForm">
             Email : <input
                 type="text" name="email"
                 value="" /> <br /> 
