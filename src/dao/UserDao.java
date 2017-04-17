@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import bcrypt.BCrypt;
 import models.User;
 import util.Database;
 
@@ -34,13 +35,12 @@ public class UserDao {
     	}
     	else {
         	try {
-        		PreparedStatement ps = connection.prepareStatement("insert into users(uname, password, email, registeredon) values (?, ?, ?, ? )");
+        		PreparedStatement ps = connection.prepareStatement("insert into users(uname, password, email) values (?, ?, ?)");
         		ps.setString(1, user.getUname());
                 ps.setString(2, user.getPassword());
                 ps.setString(3, user.getEmail());            
                 ps.executeUpdate();
                 System.out.println("User added");
-                signIn(user.getEmail(), user.getPassword());
         	} catch (SQLException e) {
        		 System.out.println("Error in addUser() -->" + e.getMessage());
         	}
@@ -64,18 +64,24 @@ public class UserDao {
 
 	public User signIn(String email, String password) {
 		System.out.println("In SignIn");
+		
 		try {
-			PreparedStatement ps = connection.prepareStatement("select * from users where email=? and password=?");
+			PreparedStatement ps = connection.prepareStatement("select * from users where email=?");
 			ps.setString(1, email);
-			ps.setString(2, password);
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()){
-				System.out.println("Sign In Success");
-				User user = new User();
-				user.setEmail(rs.getString("email"));
-				user.setUname(rs.getString("uname"));
-				user.setId(rs.getInt("id"));
-				return user;
+				if (BCrypt.checkpw(password, rs.getString("password"))){
+					System.out.println("Sign In Success");
+					System.out.println("It matches");
+					User user = new User();
+					user.setEmail(rs.getString("email"));
+					user.setUname(rs.getString("uname"));
+					user.setId(rs.getInt("id"));
+					return user;
+				}
+				else
+					System.out.println("It does not match");
+				
 			}
 			else {
 				System.out.println("Sign In Failed");

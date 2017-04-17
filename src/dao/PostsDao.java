@@ -97,7 +97,7 @@ public class PostsDao {
 		List<Comment> comments = new ArrayList<Comment>();
 		try {
 			Statement statement = connection.createStatement();
-			ResultSet rs = statement.executeQuery("select * from comments where post_id = "+id);
+			ResultSet rs = statement.executeQuery("select * from comments where post_id = "+id+" order by id desc");
 			
 			while (rs.next()) {
                 Comment comment = new Comment();
