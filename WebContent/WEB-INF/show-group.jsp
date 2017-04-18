@@ -1,6 +1,8 @@
 <%@ include file="partials/header.jsp" %>
 <br>
 
+<a href="posts?action=newpost&groupid=${group.id}" }>Create Post</a>
+
 <c:out value="${group.title}"/>
 <c:out value="${group.description}"/>
 <br>

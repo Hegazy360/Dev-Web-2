@@ -69,7 +69,6 @@ public class UserController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		User user = new User();
-		
 		if(request.getParameter("submitSignUpForm") != null){
 			String hashedPassword = BCrypt.hashpw(encryptPassword(request.getParameter("pass")), BCrypt.gensalt());
 
@@ -79,6 +78,8 @@ public class UserController extends HttpServlet {
 	        dao.addUser(user);
 		}
 		else if(request.getParameter("submitSignInForm") != null) {
+			System.out.println("inPostAjax");
+
 			System.out.println("SignIn");
 			user = dao.signIn(request.getParameter("email"),request.getParameter("password"));
 		}

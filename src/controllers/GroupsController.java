@@ -44,12 +44,12 @@ public class GroupsController extends HttpServlet {
 		// TODO Auto-generated method stub
 		String forward = "";
 		String action = request.getParameter("action");
-		int groupId = Integer.parseInt(request.getParameter("groupid"));
 		if(action != null && action.equals("newgroup")){
 			System.out.println(action);
 			forward = "/WEB-INF/new-group.jsp";
 		}
 		else { //group main page
+			int groupId = Integer.parseInt(request.getParameter("groupid"));
 			if(groupId > 0){
 				    forward = "/WEB-INF/show-group.jsp";
 					request.setAttribute("pageStyle", "home");
