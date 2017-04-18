@@ -111,6 +111,45 @@ public class UserDao {
 		}
 		return user;
 	}
+	
+	public boolean friendsCheck(int id1,int id2){
+		try {
+			PreparedStatement ps = connection.prepareStatement("select * from friends where id_1 IN (?,?) and id_2 IN (?,?)");
+			ps.setInt(1, id1);
+			ps.setInt(2, id2);
+			ps.setInt(3, id1);
+			ps.setInt(4, id2);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()){
+				System.out.println("Friends");
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("not friends");
+		return false;
+	}
+	
+	public boolean addFriend(int id1, int id2) {
+		try {
+			if(!friendsCheck(id1,id2)){
+				PreparedStatement ps = connection.prepareStatement("insert into friends(id_1,id_2) values (?,?)");
+				ps.setInt(1, id1);
+				ps.setInt(2, id2);
+                int rows = ps.executeUpdate();
+                if(rows > 0){
+                	System.out.println("friend added");
+                	return true;
+                }
+				
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return false;
+	}
  
 
 }

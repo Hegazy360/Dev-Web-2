@@ -1,11 +1,6 @@
 package controllers;
 
 import java.io.IOException;
-import java.security.Key;
-import java.security.MessageDigest;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -41,7 +36,8 @@ public class UserController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String forward = "/home";
 		String action = request.getParameter("action");
-		
+//		dao.addFriend(2, 1);
+
 		if(action != null && action.equals("new")){
 			System.out.println("OK");
 			forward = "/WEB-INF/signup.jsp";
@@ -54,7 +50,7 @@ public class UserController extends HttpServlet {
 			if(userId != null){
 				User user = new User();
 				user = dao.getById(Integer.parseInt(userId));
-				request.setAttribute("user", user);
+				request.setAttribute("currentUser", user);
 				forward = "/WEB-INF/profile.jsp";
 			}
 		}
@@ -70,31 +66,33 @@ public class UserController extends HttpServlet {
 		HttpSession session = request.getSession();
 		User user = new User();
 		if(request.getParameter("submitSignUpForm") != null){
-			String hashedPassword = BCrypt.hashpw(encryptPassword(request.getParameter("pass")), BCrypt.gensalt());
+			String hashedPassword = BCrypt.hashpw(request.getParameter("pass"), BCrypt.gensalt());
 
 			user.setUname(request.getParameter("uname"));
 			user.setPassword(hashedPassword);
 			user.setEmail(request.getParameter("email"));
 	        dao.addUser(user);
+	        if(user != null){
+	            session.setAttribute("user", user);
+	        }
 		}
 		else if(request.getParameter("submitSignInForm") != null) {
 			System.out.println("inPostAjax");
-
 			System.out.println("SignIn");
 			user = dao.signIn(request.getParameter("email"),request.getParameter("password"));
+	        if(user != null){
+	            session.setAttribute("user", user);
+	        }
 		}
-		
-        if(user != null){
-            session.setAttribute("user", user);
-        }
+		else if(request.getParameter("submitFriendRequestForm") != null) {
+			dao.addFriend(Integer.parseInt(request.getParameter("userid")),((User)session.getAttribute("user")).getId());
+		}
+
         response.sendRedirect("home");
         
         
 	}
 
-	private String encryptPassword(String password) {
-		
-		return password;
-	}
+
 
 }
