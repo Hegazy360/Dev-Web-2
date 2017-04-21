@@ -1,6 +1,5 @@
-package models;
+package beans;
 
-import java.util.Date;
 
 public class Post {
 	int id,group_id,author_id;

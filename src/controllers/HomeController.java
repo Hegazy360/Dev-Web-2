@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import dao.GroupsDao;
-import models.Group;
+import beans.Group;
+import models.GroupsDao;
 
 /**
  * Servlet implementation class Home
  */
-@WebServlet("/Home")
+@WebServlet("/home")
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private GroupsDao dao;

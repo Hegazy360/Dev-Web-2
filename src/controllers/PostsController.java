@@ -11,15 +11,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import dao.PostsDao;
-import models.Comment;
-import models.Post;
-import models.User;
+import beans.Comment;
+import beans.Post;
+import beans.User;
+import models.PostsDao;
 
 /**
  * Servlet implementation class PostsController
  */
-@WebServlet("/PostsController")
+@WebServlet("/posts")
 public class PostsController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private PostsDao postsDao;

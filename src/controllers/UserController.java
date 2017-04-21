@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import bcrypt.BCrypt;
-import dao.UserDao;
-import models.User;
+import beans.User;
+import models.UserDao;
 
 /**
  * Servlet implementation class UserController
  */
-@WebServlet("/UserController")
+@WebServlet("/user")
 public class UserController extends HttpServlet {
 
 	private static final long serialVersionUID = 1978083969201222050L;

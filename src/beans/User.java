@@ -1,4 +1,4 @@
-package models;
+package beans;
 
 public class User {
 	String uname, password, email;

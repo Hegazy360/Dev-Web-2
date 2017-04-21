@@ -1,4 +1,4 @@
-package dao;
+package models;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import bcrypt.BCrypt;
-import models.User;
+import beans.User;
 import util.Database;
 
 public class UserDao {
