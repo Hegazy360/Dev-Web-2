@@ -1,4 +1,4 @@
-package dao;
+package models;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,8 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import models.Group;
+import beans.Group;
 import util.Database;
 
 public class GroupsDao {

@@ -1,4 +1,4 @@
-package models;
+package beans;
 
 public class Friends {
 	User user1,user2;

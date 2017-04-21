@@ -11,16 +11,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import dao.GroupsDao;
-import dao.PostsDao;
-import models.Group;
-import models.Post;
-import models.User;
+import beans.Group;
+import beans.Post;
+import beans.User;
+import models.GroupsDao;
+import models.PostsDao;
 
 /**
  * Servlet implementation class GroupsController
  */
-@WebServlet("/GroupsController")
+@WebServlet("/groups")
 public class GroupsController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private GroupsDao groupsDao;

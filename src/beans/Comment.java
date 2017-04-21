@@ -1,4 +1,4 @@
-package models;
+package beans;
 
 public class Comment {
 	int id,author_id,post_id;
