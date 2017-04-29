@@ -1,4 +1,8 @@
-<%@ include file="partials/header.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<jsp:include page="partials/header.jsp">
+	<jsp:param value="pageStyle" name="profile.css"/>
+</jsp:include>
 
 
 <img src="${root}/uploads/${currentUser.id}${currentUser.image}"/>
