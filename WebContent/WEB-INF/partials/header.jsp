@@ -23,17 +23,19 @@
 	<div class="header" id="header">
 		<div class="title">DevWeb2</div>
 		<c:choose>
-			<c:when test="${user == null}">
+			<c:when test="${sessionScope.user == null}">
 			<div class="buttons">
 				<button id="signIn">Log In</button>
 				<button id="signUp" class="signup-btn">Sign Up</button>
 			</div>
 			</c:when>
 			<c:otherwise>
-			<div  class="profile-section">
-			<img class="profile-img" src="${root}/uploads/${user.id}${user.image}"/> 
-				<span class="profile-name">${user.uname}</span>
+			<a href="">
+			<div class="profile-section">
+			<img class="profile-img" src="${root}/uploads/${sessionScope.user.id}${sessionScope.user.image}"/> 
+				<span class="profile-name">${sessionScope.user.uname}</span>
 			</div>
+			</a>
 			</c:otherwise>
 		</c:choose>
 	</div>

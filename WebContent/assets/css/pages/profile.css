@@ -1,0 +1,16 @@
+#informations {
+	margin: auto;
+	padding: 50px;
+	text-align: center;
+	display: flex;
+	flex-direction:column;
+}
+
+#informations .profile-img {
+	margin:auto;
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	margin-bottom:20px;
+}
+

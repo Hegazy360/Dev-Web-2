@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,7 +19,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import bcrypt.BCrypt;
+import beans.Post;
 import beans.User;
+import models.PostsDao;
 import models.UserDao;
 
 /**
@@ -30,12 +33,14 @@ public class UserController extends HttpServlet {
 
 	private static final long serialVersionUID = 1978083969201222050L;
 	private UserDao dao;
+	private PostsDao postsDao;
 	/**
      * @see HttpServlet#HttpServlet()
      */
     public UserController() {
         super();
         dao = new UserDao();
+        postsDao = new PostsDao();
 
     }
 
@@ -46,7 +51,8 @@ public class UserController extends HttpServlet {
 		String forward = "/home";
 		String action = request.getParameter("action");
 //		dao.addFriend(2, 1);
-
+		request.setAttribute("pageStyle", "profile");
+		request.setAttribute("pageTitle", "Profile");
 		if(action != null && action.equals("new")){
 			System.out.println("OK");
 			forward = "/WEB-INF/signup.jsp";
@@ -72,6 +78,12 @@ public class UserController extends HttpServlet {
 				User user = new User();
 				user = dao.getById(Integer.parseInt(userId));
 				request.setAttribute("currentUser", user);
+
+				List<User> friends= dao.getAllFriends(Integer.parseInt(userId));
+				request.setAttribute("friends", friends);
+				
+				List<Post> createdPosts = postsDao.getPostByAuthorId(Integer.parseInt(userId));
+				request.setAttribute("createdPosts", createdPosts);
 				forward = "/WEB-INF/profile.jsp";
 			}
 		}
@@ -80,6 +92,11 @@ public class UserController extends HttpServlet {
 
 	}
 
+	
+	
+	
+	
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -107,23 +124,21 @@ public class UserController extends HttpServlet {
 				user.setPassword(hashedPassword);
 			}
 			user.setEmail(request.getParameter("email"));
-			
+			System.out.println(extension);
 			if(!extension.equals("")){
 				user.setImage("."+extension);
 			}
-			else {
-				System.out.println("herer");
-				user.setImage(((User) session.getAttribute("user")).getImage());
-			}
-			if(!request.getParameter("userid").equals("")){
-				int userId = Integer.parseInt(request.getParameter("userid"));
-				user.setId(userId);
-				dao.updateUser(user);
-				file = new File(uploads,userId+"."+extension);
-			}
-			else {
+
+			if(request.getParameter("userid") == null){ //add new user
 		        int userId = dao.addUser(user);
 		        user.setId(userId);
+				file = new File(uploads,userId+"."+extension);
+			}
+			else { //update user
+				int userId = Integer.parseInt(request.getParameter("userid"));
+				user.setId(userId);
+				user.setImage(((User) session.getAttribute("user")).getImage());
+				dao.updateUser(user);
 				file = new File(uploads,userId+"."+extension);
 			}
 

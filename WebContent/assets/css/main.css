@@ -24,7 +24,9 @@ body, div, p, a, span, button {
 	font-family: 'Lato', sans-serif;
 	color: #212121;
 }
-
+.container {
+	padding-bottom:175px;
+}
 /*header and footer style*/
 .header, .footer {
 	width: 100%;

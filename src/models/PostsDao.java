@@ -98,6 +98,29 @@ public class PostsDao {
 		}
 		return posts;
 	}
+	
+	public List<Post> getPostByAuthorId(int id){
+		List<Post> posts = new ArrayList<Post>();
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery("select * from posts where author_id = "+id+" order by id desc");
+			
+			while (rs.next()) {
+                Post post = new Post();
+                post.setId(rs.getInt("id"));
+                post.setGroup_id(rs.getInt("group_id"));
+                post.setAuthor_id(rs.getInt("author_id"));
+                post.setTitle(rs.getString("title"));
+                post.setDescription(rs.getString("description"));
+                post.setContent(rs.getString("content"));
+                posts.add(post);
+            }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return posts;
+	}
 
 	public Post getPostById(int groupId,int postId) {
 		Post post = new Post();

@@ -39,38 +39,40 @@ public class PostsController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String forward = "/home";
+		request.setAttribute("pageStyle", "posts");
+		request.setAttribute("pageTitle", "Posts");
 		String action = request.getParameter("action");
 		HttpSession session = request.getSession();
-
+		User currentUser = (User) session.getAttribute("user");
 		int groupId = Integer.parseInt(request.getParameter("groupid"));
 
-		if (session.getAttribute("user") != null) {
+		
 			if (action != null && action.equals("newpost")) {
-				System.out.println(action);
-				forward = "/WEB-INF/new-post.jsp";
+				if (currentUser != null)
+					forward = "/WEB-INF/new-post.jsp";
 			} else if (action != null && action.equals("edit")) {
-				int postId = Integer.parseInt(request.getParameter("postid"));
-				if (postId > 0) {
-					forward = "/WEB-INF/post-edit.jsp";
-					Post post = postsDao.getPostById(groupId, postId);
-					if (post != null) {
-						request.setAttribute("post", post);
+				if (currentUser != null){
+					int postId = Integer.parseInt(request.getParameter("postid"));
+					if (postId > 0) {
+						forward = "/WEB-INF/post-edit.jsp";
+						Post post = postsDao.getPostById(groupId, postId);
+						if (post != null) {
+							request.setAttribute("post", post);
+						}
 					}
-				} else {
-					forward = "/groups?groupid=" + groupId;
 				}
 			} else if (action != null && action.equals("delete")) {
+				if (currentUser != null){
 				int postId = Integer.parseInt(request.getParameter("postid"));
 				if (postId > 0) {
 					postsDao.deletePost(postId);
 					forward = "/groups?groupid=" + groupId;
 				}
+				}
 			} else { // post show page
 				int postId = Integer.parseInt(request.getParameter("postid"));
 				if (postId > 0) {
 					forward = "/WEB-INF/show-post.jsp";
-					request.setAttribute("pageStyle", "home");
-					request.setAttribute("pageTitle", "Post");
 					// get post by id
 					Post post = postsDao.getPostById(groupId, postId);
 					List<Comment> comments = postsDao.getPostComments(postId);
@@ -84,7 +86,7 @@ public class PostsController extends HttpServlet {
 
 				}
 			}
-		}
+		
 		RequestDispatcher view = request.getRequestDispatcher(forward);
 		view.forward(request, response);
 	}
