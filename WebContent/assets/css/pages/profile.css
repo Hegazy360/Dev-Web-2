@@ -1,18 +1,15 @@
-section {
-	height: 500px;
-	width: 50%;
+#informations {
 	margin: auto;
 	padding: 50px;
 	text-align: center;
 	display: flex;
+	flex-direction:column;
 }
 
-section .profile-img {
-	width: 20%;
-	height: 80%;
+#informations .profile-img {
+	margin:auto;
+	width: 150px;
+	height: 150px;
 	border-radius: 50%;
-}
-
-#informations {
-	margin: auto;
+	margin-bottom:20px;
 }

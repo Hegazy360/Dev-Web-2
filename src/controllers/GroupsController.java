@@ -44,6 +44,8 @@ public class GroupsController extends HttpServlet {
 		// TODO Auto-generated method stub
 		String forward = "";
 		String action = request.getParameter("action");
+		request.setAttribute("pageStyle", "groups");
+		request.setAttribute("pageTitle", "Group");
 		if(action != null && action.equals("newgroup")){
 			System.out.println(action);
 			forward = "/WEB-INF/new-group.jsp";
@@ -52,8 +54,7 @@ public class GroupsController extends HttpServlet {
 			int groupId = Integer.parseInt(request.getParameter("groupid"));
 			if(groupId > 0){
 				    forward = "/WEB-INF/show-group.jsp";
-					request.setAttribute("pageStyle", "home");
-					request.setAttribute("pageTitle", "Group");
+
 					//get group by id
 					Group group = groupsDao.getGroupById(groupId);
 					if(group != null){

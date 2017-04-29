@@ -2,10 +2,13 @@ package models;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.mysql.jdbc.Statement;
 
 import bcrypt.BCrypt;
 import beans.User;
@@ -183,6 +186,29 @@ public class UserDao {
 		}
 		return false;
 	}
- 
+	public List<User> getAllFriends(int id){
+		List<User> friends = new ArrayList<User>();
+		try {
+			PreparedStatement ps = connection.prepareStatement("select * from friends where id_1 = ? or id_2 = ?");
+			ps.setInt(1, id);
+			ps.setInt(2, id);
+			ResultSet rs = ps.executeQuery();
+			
+			while (rs.next()) {
+                User friend = new User();
+                if(rs.getInt("id_1") == id){
+                	friend = getById(rs.getInt("id_2"));
+                }
+                else {
+                	friend = getById(rs.getInt("id_1"));
+                }
+                friends.add(friend);
+            }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return friends;
+	}
 
 }
