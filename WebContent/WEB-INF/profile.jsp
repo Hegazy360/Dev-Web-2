@@ -1,6 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:set var="root" value="${pageContext.request.contextPath}" />
-
 <jsp:include page="partials/header.jsp">
 	<jsp:param value="pageStyle" name="profile"/>
 </jsp:include>
