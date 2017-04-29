@@ -72,6 +72,8 @@ public class UserController extends HttpServlet {
 				User user = new User();
 				user = dao.getById(Integer.parseInt(userId));
 				request.setAttribute("currentUser", user);
+				request.setAttribute("pageStyle", "profile");
+				request.setAttribute("pageTitle", "My profile");
 				forward = "/WEB-INF/profile.jsp";
 			}
 		}
@@ -107,23 +109,24 @@ public class UserController extends HttpServlet {
 				user.setPassword(hashedPassword);
 			}
 			user.setEmail(request.getParameter("email"));
-			
-			if(!extension.equals("")){
-				user.setImage("."+extension);
-			}
-			else {
-				System.out.println("herer");
-				user.setImage(((User) session.getAttribute("user")).getImage());
-			}
-			if(!request.getParameter("userid").equals("")){
-				int userId = Integer.parseInt(request.getParameter("userid"));
-				user.setId(userId);
-				dao.updateUser(user);
+			user.setImage(extension);
+
+			if(request.getParameter("userid") == null){
+		        int userId = dao.addUser(user);
+		        user.setId(userId);
 				file = new File(uploads,userId+"."+extension);
 			}
 			else {
-		        int userId = dao.addUser(user);
-		        user.setId(userId);
+				if(!extension.equals("")){
+					user.setImage("."+extension);
+				}
+				else {
+					System.out.println("herer");
+					user.setImage(((User) session.getAttribute("user")).getImage());
+				}
+				int userId = Integer.parseInt(request.getParameter("userid"));
+				user.setId(userId);
+				dao.updateUser(user);
 				file = new File(uploads,userId+"."+extension);
 			}
 
