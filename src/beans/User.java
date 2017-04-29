@@ -1,14 +1,14 @@
 package beans;
 
 public class User {
-	String uname, password, email;
+	String uname, password, email, image;
 	int id;
 	boolean admin;
 
 	public int getId() {
 		return id;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -43,6 +43,14 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 }

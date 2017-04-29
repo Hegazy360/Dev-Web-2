@@ -7,8 +7,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="https://fonts.googleapis.com/css?family=Open+Sans"
-	rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -22,23 +21,22 @@
 
 <body>
 	<div class="header" id="header">
-		<div class="title">Test</div>
+		<div class="title">DevWeb2</div>
 		<c:choose>
 			<c:when test="${user == null}">
 			<div class="buttons">
-				<a href="user?action=signin">Log In</a> <a href="user?action=new"
-					class="signup-btn">Sign Up</a>
+				<button id="signIn">Log In</button>
+				<button id="signUp" class="signup-btn">Sign Up</button>
 			</div>
 			</c:when>
 			<c:otherwise>
-			<div>
-						Name
-			<c:out value="${user.uname}"/>
+			<div  class="profile-section">
+			<img class="profile-img" src="${root}/uploads/${user.id}${user.image}"/> 
+				<span class="profile-name">${user.uname}</span>
 			</div>
-
 			</c:otherwise>
 		</c:choose>
-		
-
-		
 	</div>
+	<%@ include file="signin.jsp"%>
+	<%@ include file="signup.jsp"%>
+	
