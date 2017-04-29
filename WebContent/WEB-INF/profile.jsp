@@ -1,6 +1,4 @@
-<jsp:include page="partials/header.jsp">
-	<jsp:param value="pageStyle" name="profile"/>
-</jsp:include>
+<%@include file="partials/header.jsp" %>
 
 <section>
 	<div id="informations">
