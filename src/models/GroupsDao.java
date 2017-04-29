@@ -13,9 +13,10 @@ import util.Database;
 
 public class GroupsDao {
 	private Connection connection;
-
+	UserDao userDao;
 	public GroupsDao(){
 		connection = Database.getConnection();
+		userDao = new UserDao();
 	}
 	
 	public boolean createGroup(Group group){
@@ -48,6 +49,7 @@ public class GroupsDao {
                 group.setTitle(rs.getString("title"));
                 group.setDescription(rs.getString("description"));
                 group.setCreator_id(rs.getInt("creator_id"));
+				group.setCreatorName(userDao.getById(rs.getInt("creator_id")).getUname());
                 groups.add(group);
             }
 		} catch (SQLException e) {

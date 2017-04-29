@@ -42,19 +42,45 @@ public class PostsDao {
 		return false;		
 	}
 
-	public void deletePost(String postId) {
-
+	public boolean deletePost(int postId) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("delete from posts where id ="+postId);
+            int rows = ps.executeUpdate();
+            if(rows > 0){
+            	return true;
+            }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("false");
+		return false;		
 	}
 
-	public void updatePost(Post post) {
-
+	public boolean updatePost(Post post) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("update posts set title = ? ,description = ?,content = ? where id = ?");
+            ps.setString(1, post.getTitle()); 
+            ps.setString(2, post.getDescription());
+            ps.setString(3, post.getContent());
+            ps.setInt(4, post.getId());
+            int rows = ps.executeUpdate();
+            if(rows > 0){
+            	return true;
+            }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("false");
+		return false;		
 	}
 	
 	public List<Post> getAllPosts(int id){
 		List<Post> posts = new ArrayList<Post>();
 		try {
 			Statement statement = connection.createStatement();
-			ResultSet rs = statement.executeQuery("select * from posts where group_id = "+id);
+			ResultSet rs = statement.executeQuery("select * from posts where group_id = "+id+" order by id desc");
 			
 			while (rs.next()) {
                 Post post = new Post();

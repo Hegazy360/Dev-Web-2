@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.mysql.jdbc.Statement;
+
 import bcrypt.BCrypt;
 import beans.User;
 import util.Database;
@@ -29,22 +31,28 @@ public class UserDao {
 		}
 		return false;
     }
-    public void addUser(User user) {
+    public int addUser(User user) {
     	if(checkUser(user.getEmail())){
     		System.out.println("User already exists");
     	}
     	else {
         	try {
-        		PreparedStatement ps = connection.prepareStatement("insert into users(uname, password, email) values (?, ?, ?)");
+        		PreparedStatement ps = connection.prepareStatement("insert into users(uname, password, email,image) values (?, ?, ?,?)",Statement.RETURN_GENERATED_KEYS);
         		ps.setString(1, user.getUname());
                 ps.setString(2, user.getPassword());
-                ps.setString(3, user.getEmail());            
+                ps.setString(3, user.getEmail());  
+                ps.setString(4, user.getImage());
                 ps.executeUpdate();
+                ResultSet rs = ps.getGeneratedKeys();
+                if(rs.next()){
+                	return rs.getInt(1);
+                }
                 System.out.println("User added");
         	} catch (SQLException e) {
        		 System.out.println("Error in addUser() -->" + e.getMessage());
         	}
     	}
+		return 0;
     }
  
     public void deleteUser(String email) {
@@ -58,8 +66,31 @@ public class UserDao {
 		}
     }
  
-    public void updateUser(User user) {
-    	
+    public boolean updateUser(User user) {
+    	try {
+    		String query = "update users set uname = \""+user.getUname()+"\"";
+    		if(user.getPassword() != null){
+    			query+=" , password = \""+user.getPassword()+"\"";
+    		}
+    		if(!user.getEmail().equals("")){
+    			query+=" , email = \""+user.getEmail()+"\"";
+    		}
+    		if(!user.getImage().equals(".")){
+    			query +=", image = \""+user.getImage()+"\"";
+    		}
+    		query +=" where id = "+user.getId();
+    		System.out.println(query);
+			PreparedStatement ps = connection.prepareStatement(query);
+            int rows = ps.executeUpdate();
+            if(rows > 0){
+            	return true;
+            }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("false");
+		return false;	
     }
 
 	public User signIn(String email, String password) {
@@ -77,6 +108,7 @@ public class UserDao {
 					user.setEmail(rs.getString("email"));
 					user.setUname(rs.getString("uname"));
 					user.setId(rs.getInt("id"));
+					user.setImage(rs.getString("image"));
 					return user;
 				}
 				else
@@ -104,6 +136,7 @@ public class UserDao {
 				user.setEmail(rs.getString("email"));
 				user.setUname(rs.getString("uname"));
 				user.setId(rs.getInt("id"));
+				user.setImage(rs.getString("image"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

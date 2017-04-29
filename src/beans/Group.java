@@ -1,7 +1,7 @@
 package beans;
 
 public class Group {
-	String title,description;
+	String title,description,creatorName;
 	int id,creator_id;
 	
 	
@@ -29,5 +29,12 @@ public class Group {
 	public void setCreator_id(int creator_id) {
 		this.creator_id = creator_id;
 	}
+	public String getCreatorName() {
+		return creatorName;
+	}
+	public void setCreatorName(String creatorName) {
+		this.creatorName = creatorName;
+	}
+	
 	
 }
