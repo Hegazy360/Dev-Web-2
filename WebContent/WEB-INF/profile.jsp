@@ -6,8 +6,6 @@
 </jsp:include>
 
 <section>
-	<img class="profile-img" src="${root}/uploads/${currentUser.id}${currentUser.image}"/>
-	
 	<div id="informations">
 		<p class="champ">
 			<span class="titre">Nom d'utilisateur :</span> 
@@ -21,6 +19,8 @@
 		
 		<a href="user?userid=${ currentUser.id }&&action=edit" title="Modify my informations">Modify my informations</a>
 	</div>
+	
+	<img class="profile-img" src="${root}/uploads/${currentUser.id}${currentUser.image}"/>
 </section>
 
 <%@ include file="partials/footer.jsp" %>
