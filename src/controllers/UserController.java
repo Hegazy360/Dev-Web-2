@@ -78,12 +78,12 @@ public class UserController extends HttpServlet {
 				User user = new User();
 				user = dao.getById(Integer.parseInt(userId));
 				request.setAttribute("currentUser", user);
-
 				List<User> friends= dao.getAllFriends(Integer.parseInt(userId));
 				request.setAttribute("friends", friends);
 				
 				List<Post> createdPosts = postsDao.getPostByAuthorId(Integer.parseInt(userId));
 				request.setAttribute("createdPosts", createdPosts);
+
 				forward = "/WEB-INF/profile.jsp";
 			}
 		}
