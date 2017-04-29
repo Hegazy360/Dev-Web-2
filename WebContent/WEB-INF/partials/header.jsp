@@ -15,7 +15,7 @@
 <link type="text/css" rel="stylesheet"
 	href="${root}/assets/css/main.css" />
 <link type="text/css" rel="stylesheet"
-	href="${root}/assets/css/pages/${request.pageStyle}.css" />
+	href="${root}/assets/css/pages/${pageStyle}.css" />
 <title>${pageTitle}</title>
 </head>
 
