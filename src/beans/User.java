@@ -1,7 +1,7 @@
 package beans;
 
 public class User {
-	String uname, password, email, image;
+	String uname, password, email, image,ip;
 	int id;
 	boolean admin;
 
@@ -52,5 +52,15 @@ public class User {
 	public void setImage(String image) {
 		this.image = image;
 	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+
 
 }

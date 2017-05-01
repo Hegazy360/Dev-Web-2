@@ -1,22 +1,35 @@
 <%@ include file="partials/header.jsp"%>
 <br>
 
-<c:out value="${post.title}" />
-<c:out value="${post.description}" />
-<c:out value="${post.content}" />
 
-<br>
+<div class="container">
+<div class="post">
+<div class="title">${post.title}</div>
+<div class="description">${post.description}</div>
+<div class="content">${post.content}</div>
+</div>
+<div class="comments">
 <c:forEach items="${comments}" var="comment">
-	<c:out value="${comment.userName}" />
-	<c:out value="${comment.content}" />
-	<br>
+	<div class="comment">
+	<p>${comment.userName}</p>
+	<p>${comment.content}</p>
+	</div>
 </c:forEach>
 
+<div class="new-comment">
 <form method="POST" action='posts' name="newCommentForm">
-	Title : <input type="text" name="content" value="" /> <br /> <input
+		<input type="text" name="content" value="" /> <br /> <input
 		type="hidden" name="postid" value="${param.postid}" /> <input
 		type="hidden" name="groupid" value="${param.groupid}" /> <input
-		type="submit" name="submitCommentForm" value="Submit" />
+		type="submit" name="submitCommentForm" value="Comment" />
 </form>
+</div>
+</div>
+
+</div>
+
+
+
+
 <br>
 <%@ include file="partials/footer.jsp"%>
