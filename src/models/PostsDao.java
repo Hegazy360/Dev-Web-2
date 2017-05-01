@@ -90,6 +90,7 @@ public class PostsDao {
                 post.setTitle(rs.getString("title"));
                 post.setDescription(rs.getString("description"));
                 post.setContent(rs.getString("content"));
+                post.setAuthorName(userDao.getById(rs.getInt("author_id")).getUname());
                 posts.add(post);
             }
 		} catch (SQLException e) {

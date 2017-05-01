@@ -10,17 +10,19 @@
 <div>
 <c:out value="${group.description}"/>
 </div>
+	<c:if test="${sessionScope.user != null}">
 	<a class="button center" href="posts?action=newpost&groupid=${group.id}">Create Post</a> <br>
-	<div class="group-cards col-xs-8 col-xs-offset-2">
+	</c:if>
+	<div class="cards col-xs-8 col-xs-offset-2">
 		<c:forEach items="${posts}" var="post">
-		<div class="group-card">
+		<div class="card">
 			<a href="posts?groupid=${group.id}&postid=${post.id}">
 			<div class="top-bar">
-				<div class="group-title">${group.title}</div>
-				<div class="group-creator">By : ${group.creatorName}</div>
+				<div class="title">${post.title}</div>
+				<div class="creator">By : ${post.authorName}</div>
 			</div>
-			<div class="group-description">${post.description}</div>
-			<div class="group-description">${post.content}</div>
+			<div class="description">${post.description}</div>
+			<div class="content">${post.content}</div>
 			
 			</a>
 		</div>

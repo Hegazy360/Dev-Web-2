@@ -3,7 +3,7 @@ package beans;
 
 public class Post {
 	int id,group_id,author_id;
-	String title,description,content,userName;
+	String title,description,content,authorName;
 	
 	public int getId() {
 		return id;
@@ -41,11 +41,11 @@ public class Post {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getUserName() {
-		return userName;
+	public String getAuthorName() {
+		return authorName;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setAuthorName(String userName) {
+		this.authorName = userName;
 	}
 	
 

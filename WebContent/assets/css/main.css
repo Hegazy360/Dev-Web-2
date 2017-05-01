@@ -123,3 +123,21 @@ body, div, p, a, span, button {
 	font-size: 22px;
 	text-align: center;
 }
+
+.cards {
+	margin-top:35px;
+}
+.card {
+	border:1px solid black;
+	display:flex;
+	padding:20px;
+	margin-bottom:10px;
+	box-shadow:1px 2px 3px #000;
+}
+.card a {
+	width:100%;
+}
+.card .top-bar {
+	display:flex;
+	justify-content:space-between;
+}
