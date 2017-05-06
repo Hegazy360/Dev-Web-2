@@ -1,99 +1,191 @@
 package chat;
 
-import java.net.*;
-import java.io.*;
-import java.applet.*;
-import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
-public class ChatClient extends Applet {
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.google.gson.Gson;
+
+import beans.Message;
+import beans.User;
+
+@WebServlet("/ChatClient")
+public class ChatClient extends HttpServlet implements Runnable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Socket socket = null;
 	private DataInputStream console = null;
 	private DataOutputStream streamOut = null;
 	private ChatClientThread client = null;
-	private TextArea display = new TextArea();
-	private TextField input = new TextField();
-	private Button send = new Button("Send"), connect = new Button("Connect"), quit = new Button("Bye");
-	private String serverName = "localhost";
-	private int serverPort = 4444;
-
-	public void init() {
-		Panel keys = new Panel();
-		keys.setLayout(new GridLayout(1, 2));
-		keys.add(quit);
-		keys.add(connect);
-		Panel south = new Panel();
-		south.setLayout(new BorderLayout());
-		south.add("West", keys);
-		south.add("Center", input);
-		south.add("East", send);
-		Label title = new Label("Simple Chat Client Applet", Label.CENTER);
-		title.setFont(new Font("Helvetica", Font.BOLD, 14));
-		setLayout(new BorderLayout());
-		add("North", title);
-		add("Center", display);
-		add("South", south);
-		quit.disable();
-		send.disable();
-		getParameters();
+	private ArrayList<Message> messages = null;
+	private User user=null;
+	public ChatClient() {
+		super();
+		messages = new ArrayList<Message>();
 	}
 
-	public boolean action(Event e, Object o) {
-		if (e.target == quit) {
-			input.setText(".bye");
-			send();
-			quit.disable();
-			send.disable();
-			connect.enable();
-		} else if (e.target == connect) {
-			connect(serverName, serverPort);
-		} else if (e.target == send) {
-			send();
-			input.requestFocus();
-		}
-		return true;
-	}
-
-	public void connect(String serverName, int serverPort) {
-		println("Establishing connection. Please wait ...");
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("Establishing connection. Please wait ...");
+		HttpSession session = request.getSession();
+		String forward = "/WEB-INF/chat.jsp";
+		request.removeAttribute("messages");
+		user = (User) session.getAttribute("user");
 		try {
-			socket = new Socket(serverName, serverPort);
-			println("Connected: " + socket);
-			open();
-			send.enable();
-			connect.disable();
-			quit.enable();
+			Socket[][] socketList = (Socket[][]) session.getAttribute("socketList");
+			int id1 = Integer.parseInt(request.getParameter("id1"));
+			int id2 = Integer.parseInt(request.getParameter("id2"));
+			System.out.println(id1);
+			System.out.println(id2);
+			if (socketList != null) {
+				if (socketList[id1][id2] != null) {
+					console = new DataInputStream(System.in);
+					streamOut = new DataOutputStream(socketList[id1][id2].getOutputStream());
+					System.out.println("socket is :" + socketList[id1][id2]);
+					System.out.println("TESTINO1");
+				} else {
+					socket = new Socket((String) request.getAttribute("serverName"),
+							(int) request.getAttribute("serverPort"));
+					System.out.println("Connected: " + socket);
+					console = new DataInputStream(System.in);
+					streamOut = new DataOutputStream(socket.getOutputStream());
+					client = new ChatClientThread(this, socket);
+					session.setAttribute("client", client);
+					socketList[id1][id2] = socket;
+					session.setAttribute("socketList", socketList);
+					System.out.println("TESTINO2");
+
+				}
+			} else {
+				socketList = new Socket[10][100];
+				socket = new Socket((String) request.getAttribute("serverName"),
+						(int) request.getAttribute("serverPort"));
+				System.out.println("Connected: " + socket);
+				console = new DataInputStream(System.in);
+				streamOut = new DataOutputStream(socket.getOutputStream());
+				client = new ChatClientThread(this, socket);
+				session.setAttribute("client", client);
+				socketList[id1][id2] = socket;
+				System.out.println("socket is :" + socket);
+				session.setAttribute("socketList", socketList);
+				System.out.println("TESTINO3");
+			}
+
 		} catch (UnknownHostException uhe) {
-			println("Host unknown: " + uhe.getMessage());
 		} catch (IOException ioe) {
-			println("Unexpected exception: " + ioe.getMessage());
 		}
+		RequestDispatcher view = request.getRequestDispatcher(forward);
+		view.forward(request, response);
 	}
 
-	private void send() {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String forward = "/WEB-INF/chat.jsp";
+		HttpSession session = request.getSession();
+//		messages = (ArrayList<Message>) request.getAttribute("messages");
+		boolean ajax = "XMLHttpRequest".equals(
+                request.getHeader("X-Requested-With"));
+		Socket[][] socketList = (Socket[][]) session.getAttribute("socketList");
+		int id1 = Integer.parseInt(request.getParameter("id1"));
+		int id2 = Integer.parseInt(request.getParameter("id2"));
+		streamOut = new DataOutputStream(socket.getOutputStream());
+		System.out.println("id1 is :"+id1);
+		System.out.println("id2 is :"+id2);
+		
+		
+		if (socketList != null) {
+			if (socketList[id1][id2] != null) {
+				console = new DataInputStream(System.in);
+				streamOut = new DataOutputStream(socketList[id1][id2].getOutputStream());
+				System.out.println("socket is :" + socketList[id1][id2]);
+				System.out.println("TESTINO1");
+				if(ajax){
+					System.out.println("Ajax called");
+					if(request.getParameter("message") != null){
+						send(request.getParameter("message"));
+					}
+					else {
+						send("");
+					}
+					try {
+						TimeUnit.SECONDS.sleep(1);
+						request.setAttribute("messages", messages);
+						String json = new Gson().toJson(messages);
+						System.out.println(json.toString());
+						response.setContentType("application/json");
+					    response.setCharacterEncoding("UTF-8");
+					    response.getWriter().write(json);
+						System.out.println("Updated messages list : ");
+						displayMessages((ArrayList<Message>) request.getAttribute("messages"));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return;
+				}
+				else {
+					System.out.println("Normal Called");
+				}
+			} 
+		} 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+		
+//		try {
+
+//					if (request.getParameter("sendMessage") != null) {
+//						System.out.println("Message received in post method" + request.getParameter("message"));
+//						// client1.send(request.getParameter("message"));
+//						send(request.getParameter("message"));
+//						try {
+//							TimeUnit.SECONDS.sleep(1);
+//							request.setAttribute("messages", messages);
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}
+//					System.out.println("Updated messages list : ");
+//					displayMessages((ArrayList<Message>) request.getAttribute("messages"));
+//
+//
+//		} catch (UnknownHostException uhe) {
+//		} catch (IOException ioe) {
+//		}
+
+		RequestDispatcher view = request.getRequestDispatcher(forward);
+		view.forward(request, response);
+	}
+
+	public void send(String msg) {
 		try {
-			streamOut.writeUTF(input.getText());
+			streamOut.writeUTF(msg);
 			streamOut.flush();
-			input.setText("");
 		} catch (IOException ioe) {
-			println("Sending error: " + ioe.getMessage());
 			close();
-		}
-	}
-
-	public void handle(String msg) {
-		if (msg.equals(".bye")) {
-			println("Good bye. Press RETURN to exit ...");
-			close();
-		} else
-			println(msg);
-	}
-
-	public void open() {
-		try {
-			streamOut = new DataOutputStream(socket.getOutputStream());
-			client = new ChatClientThread(this, socket);
-		} catch (IOException ioe) {
-			println("Error opening output stream: " + ioe);
 		}
 	}
 
@@ -104,18 +196,54 @@ public class ChatClient extends Applet {
 			if (socket != null)
 				socket.close();
 		} catch (IOException ioe) {
-			println("Error closing ...");
 		}
 		client.close();
 		client.stop();
 	}
 
-	private void println(String msg) {
-		display.appendText(msg + "\n");
+	public void handle(String msg, ArrayList<Message> threadMessages) {
+		if(!msg.equals("")){
+			Message msgtmp = new Message();
+			msgtmp.setContent(msg);
+			msgtmp.setName(user.getUname());
+			System.out.println("USER NAME IS :"+ user.getUname());
+			msgtmp.setDate(new Date());
+			threadMessages.add(msgtmp);
+		}
+		this.messages = threadMessages;
+		System.out.println("Updated messages list in handle : ");
+		displayMessages(threadMessages);
+		System.out.println("-----------------------");
+
 	}
 
-	public void getParameters() {
-		serverName = "localhost";
-		serverPort = 55555;
+	// public void stop() {
+	// if (thread != null) {
+	// thread.stop();
+	// thread = null;
+	// }
+	// try {
+	// if (console != null)
+	// console.close();
+	// if (streamOut != null)
+	// streamOut.close();
+	// if (socket != null)
+	// socket.close();
+	// } catch (IOException ioe) {
+	// System.out.println("Error closing ...");
+	// }
+	// client.close();
+	// client.stop();
+	// }
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+
+	}
+	public void displayMessages(ArrayList<Message> messages){
+		for (Message message : messages) {   
+		    System.out.println(message.getContent());
+		}
 	}
 }

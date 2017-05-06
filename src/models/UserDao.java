@@ -147,6 +147,8 @@ public class UserDao {
 					user.setUname(rs.getString("uname"));
 					user.setId(rs.getInt("id"));
 					user.setImage(rs.getString("image"));
+					user.setStatus(1);
+					changeStatus(rs.getInt("id"), 1);
 					return user;
 				} else
 					System.out.println("It does not match");
@@ -160,6 +162,19 @@ public class UserDao {
 
 		}
 		return null;
+	}
+
+	public void changeStatus(int id,int status) {
+		// TODO Auto-generated method stub
+		try {
+			PreparedStatement ps = connection.prepareStatement("update users set status = ? where id =?");
+			ps.setInt(1, status);
+			ps.setInt(2, id);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void updateIP(String email) {
@@ -202,6 +217,7 @@ public class UserDao {
 				user.setId(rs.getInt("id"));
 				user.setImage(rs.getString("image"));
 				user.setIp(LongIPToString(rs.getLong("ip")));
+				user.setStatus(rs.getInt("status"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -210,10 +226,10 @@ public class UserDao {
 		return user;
 	}
 
-	public boolean friendsCheck(int id1, int id2) {
+	public boolean friendRequestCheck(int id1, int id2) {
 		try {
 			PreparedStatement ps = connection
-					.prepareStatement("select * from friends where id_1 IN (?,?) and id_2 IN (?,?)");
+					.prepareStatement("select * from friendrequests where id1 IN (?,?) and id2 IN (?,?)");
 			ps.setInt(1, id1);
 			ps.setInt(2, id2);
 			ps.setInt(3, id1);
@@ -230,16 +246,35 @@ public class UserDao {
 		System.out.println("not friends");
 		return false;
 	}
-
+	public boolean friendCheck(int id1, int id2) {
+		try {
+			PreparedStatement ps = connection
+					.prepareStatement("select * from friends where id1 IN (?,?) and id2 IN (?,?)");
+			ps.setInt(1, id1);
+			ps.setInt(2, id2);
+			ps.setInt(3, id1);
+			ps.setInt(4, id2);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				System.out.println("Friends");
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("not friends");
+		return false;
+	}
 	public boolean addFriend(int id1, int id2) {
 		try {
-			if (!friendsCheck(id1, id2)) {
-				PreparedStatement ps = connection.prepareStatement("insert into friends(id_1,id_2) values (?,?)");
+			if (!friendRequestCheck(id1, id2) && !friendCheck(id1, id2)) {
+				PreparedStatement ps = connection.prepareStatement("insert into friendrequests(id1,id2) values (?,?)");
 				ps.setInt(1, id1);
 				ps.setInt(2, id2);
 				int rows = ps.executeUpdate();
 				if (rows > 0) {
-					System.out.println("friend added");
+					System.out.println("friend request sent");
 					return true;
 				}
 
@@ -253,17 +288,17 @@ public class UserDao {
 	public List<User> getAllFriends(int id) {
 		List<User> friends = new ArrayList<User>();
 		try {
-			PreparedStatement ps = connection.prepareStatement("select * from friends where id_1 = ? or id_2 = ?");
+			PreparedStatement ps = connection.prepareStatement("select * from friends where id1 = ? or id2 = ?");
 			ps.setInt(1, id);
 			ps.setInt(2, id);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				User friend = new User();
-				if (rs.getInt("id_1") == id) {
-					friend = getById(rs.getInt("id_2"));
+				if (rs.getInt("id1") == id) {
+					friend = getById(rs.getInt("id2"));
 				} else {
-					friend = getById(rs.getInt("id_1"));
+					friend = getById(rs.getInt("id1"));
 				}
 				friends.add(friend);
 			}
@@ -272,6 +307,64 @@ public class UserDao {
 			e.printStackTrace();
 		}
 		return friends;
+	}
+	public List<User> getAllFriendRequests(int id) {
+		List<User> friendRequests = new ArrayList<User>();
+		try {
+			PreparedStatement ps = connection.prepareStatement("select * from friendrequests where id2 = ?");
+			ps.setInt(1, id);
+			
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				User user = new User();
+					user = getById(rs.getInt("id1"));
+					friendRequests.add(user);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return friendRequests;
+	}
+	public boolean acceptFriendRequest(int id1, int id2) {
+		try {
+			if (!friendCheck(id1, id2)) {
+				PreparedStatement ps = connection.prepareStatement("insert into friends (id1,id2) values (?,?)");
+				ps.setInt(1, id1);
+				ps.setInt(2, id2);
+				int rows = ps.executeUpdate();
+				if (rows > 0) {
+					System.out.println("friend request accepted");
+					deleteFriendRequest(id1,id2);
+					return true;
+				}
+
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return false;
+	}
+	
+	public boolean deleteFriendRequest(int id1, int id2) {
+		// TODO Auto-generated method stub
+		System.out.println("IN DELETE");
+		try {
+				PreparedStatement ps = connection.prepareStatement("delete from friendrequests where id1 IN (?,?) and id2 IN (?,?)");
+				ps.setInt(1, id1);
+				ps.setInt(2, id2);
+				ps.setInt(3, id1);
+				ps.setInt(4, id2);
+				int rows = ps.executeUpdate();
+				if (rows > 0) {
+					System.out.println("friend request deleted");
+					return true;
+				}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return false;
 	}
 
 	public Long StringIPToLong(String IP) {
@@ -291,5 +384,22 @@ public class UserDao {
 	public String LongIPToString(long IP) {
 		return ((IP >> 24) & 0xFF) + "." + ((IP >> 16) & 0xFF) + "." + ((IP >> 8) & 0xFF) + "." + (IP & 0xFF);
 	}
+
+	public List<User> getOnlineFriends(int id) {
+		// TODO Auto-generated method stub
+		List<User> friends = getAllFriends(id);
+		List<User> onlineFriends = new ArrayList<User>();
+		for(User user :friends){
+			if(user.getStatus() == 1){
+				onlineFriends.add(user);
+				System.out.println("Friend "+user.getUname() + " is online");
+			}
+		}
+		return onlineFriends;
+	}
+
+
+
+
 
 }

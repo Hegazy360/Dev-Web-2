@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import com.google.gson.Gson;
+
 import bcrypt.BCrypt;
 import beans.Post;
 import beans.User;
@@ -48,11 +50,13 @@ public class UserController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String forward = "/home";
+		String forward = "home";
 		String action = request.getParameter("action");
 //		dao.addFriend(2, 1);
 		request.setAttribute("pageStyle", "profile");
 		request.setAttribute("pageTitle", "Profile");
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
 		if(action != null && action.equals("new")){
 			System.out.println("OK");
 			forward = "/WEB-INF/signup.jsp";
@@ -61,27 +65,40 @@ public class UserController extends HttpServlet {
 			forward = "/WEB-INF/signin.jsp";
 		}
 		else if(action != null && action.equals("edit")){
-			int postId = Integer.parseInt(request.getParameter("userid"));
-			if (postId > 0) {
+			int userId = Integer.parseInt(request.getParameter("userid"));
+			if (userId > 0) {
 				forward = "/WEB-INF/user-edit.jsp";
-				User user = dao.getById(postId);
-				if (user != null) {
+				User userTmp = dao.getById(userId);
+				if (userTmp != null) {
 					request.setAttribute("currentUser", user);
 				}
 			} else {
-				forward = "/home";
+				forward = "home";
+			}
+		}
+		else if (action != null && action.equals("sendFriendRequest")){
+			if(user!=null){ //user requesting is logged in
+				int userId = Integer.parseInt(request.getParameter("userid"));
+				if (userId > 0) {
+					dao.addFriend(user.getId(), userId);
+				}
+				else {
+					forward = "home";
+				}
 			}
 		}
 		else {
 			String userId = request.getParameter("userid");
 			if(userId != null){
-				User user = new User();
-				user = dao.getById(Integer.parseInt(userId));
-				request.setAttribute("currentUser", user);
+				User userTmp = new User();
+				userTmp = dao.getById(Integer.parseInt(userId));
+				request.setAttribute("currentUser", userTmp);
 
 				List<User> friends= dao.getAllFriends(Integer.parseInt(userId));
 				request.setAttribute("friends", friends);
 				
+				List<User> friendRequests = dao.getAllFriendRequests(Integer.parseInt(userId));
+				request.setAttribute("friendRequests", friendRequests);
 				List<Post> createdPosts = postsDao.getPostByAuthorId(Integer.parseInt(userId));
 				request.setAttribute("createdPosts", createdPosts);
 				forward = "/WEB-INF/profile.jsp";
@@ -163,6 +180,24 @@ public class UserController extends HttpServlet {
 		else if(request.getParameter("submitFriendRequestForm") != null) {
 			dao.addFriend(Integer.parseInt(request.getParameter("userid")),((User)session.getAttribute("user")).getId());
 		}
+		else if(request.getParameter("acceptFriendRequest") != null){
+			dao.acceptFriendRequest(Integer.parseInt(request.getParameter("friendRequestId")),((User) session.getAttribute("user")).getId());
+		}
+		else if(request.getParameter("refuseFriendRequest") != null){
+			dao.deleteFriendRequest(Integer.parseInt(request.getParameter("friendRequestId")),((User) session.getAttribute("user")).getId());
+		}
+		else if(request.getParameter("getOnlineFriends")!=null){
+			System.out.println("requested online friends");
+			List<User> onlineFriends = dao.getOnlineFriends(((User) session.getAttribute("user")).getId());
+			String json = new Gson().toJson(onlineFriends);
+			System.out.println(json.toString());
+			response.setContentType("application/json");
+		    response.setCharacterEncoding("UTF-8");
+		    response.getWriter().write(json);
+			request.setAttribute("onlineFriends", onlineFriends);
+			return;
+		}
+		
 
         response.sendRedirect("home");
         

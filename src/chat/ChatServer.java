@@ -1,30 +1,39 @@
 package chat;
 
 import java.net.*;
+
+import beans.Message;
+
 import java.io.*;
 
 public class ChatServer implements Runnable {
-	private ChatServerThread clients[] = new ChatServerThread[2];
+	private ChatServerThread clients[] = new ChatServerThread[50];
 	private ServerSocket server = null;
 	private Thread thread = null;
 	private int clientCount = 0;
+	private int port;
+	Message messages = null;
 
 	public ChatServer(int port) {
 		try {
 			System.out.println("Binding to port " + port + ", please wait  ...");
 			server = new ServerSocket(port);
-			// System.out.println("Server started: " + server);
 			System.out.println("Server started at port: " + server.getLocalPort());
-
+			this.port = server.getLocalPort();
 			start();
 		} catch (IOException ioe) {
 			System.out.println("Can not bind to port " + port + ": " + ioe.getMessage());
 		}
 	}
 
+	public int getPort() {
+		return port;
+	}
+
 	public void run() {
 		while (thread != null) {
 			try {
+				messages = new Message();
 				System.out.println("Waiting for a client ...");
 				addThread(server.accept());
 			} catch (IOException ioe) {
@@ -56,14 +65,13 @@ public class ChatServer implements Runnable {
 	}
 
 	public synchronized void handle(int ID, String input) {
-		if (input.equals(".bye")) {
-			clients[findClient(ID)].send(".bye");
-			remove(ID);
-		} else
-			for (int i = 0; i < clientCount; i++) {
-				System.out.println("received" + input);
+		for (int i = 0; i < clientCount; i++) {
+			if(!input.equals("")){
 				clients[i].send(ID + ": " + input);
+			}else {
+				clients[i].send("");
 			}
+		}
 	}
 
 	public synchronized void remove(int ID) {
@@ -85,7 +93,7 @@ public class ChatServer implements Runnable {
 	}
 
 	private void addThread(Socket socket) {
-		if (clientCount < 2) {
+		if (clientCount < 50) {
 			System.out.println("Client accepted: " + socket);
 			clients[clientCount] = new ChatServerThread(this, socket);
 			try {
@@ -98,9 +106,4 @@ public class ChatServer implements Runnable {
 		} else
 			System.out.println("Client refused: maximum " + clients.length + " reached.");
 	}
-	// public static void main(String args[])
-	// { ChatServer server = null;
-	//
-	// server = new ChatServer(55555);
-	// }
 }

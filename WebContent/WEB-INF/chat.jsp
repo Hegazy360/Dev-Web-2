@@ -1,24 +1,21 @@
 <%@ include file="partials/header.jsp"%>
 
 
+<div id="chatLog">
+		
+</div>
 
-  <div id="actions" data-peerid="${sessionScope.user.id}">
-    Your PeerJS ID is <span id="pid"></span><br>
-    Connect to a peer: <input type="text" id="rid" placeholder="Someone else's id"><input class="button" type="button" value="Connect" id="connect"><br><br>
-
-    <form id="send">
-      <input type="text" id="text" placeholder="Enter message"><input class="button" type="submit" value="Send to selected peers">
-    </form>
-    <button id="close">Close selected connections</button>
-    <div id="wrap"><div id="connections"><span class="filler">You have not yet
-        made any connections.</span></div>
-  </div>
-
+<form method="POST" action='chat?id1=${param.id1}&id2=${param.id2}'
+	name="messageSendForm" id="messageSendForm" class="col-xs-6 col-xs-offset-3">
+	Message : <br> <input type="text" name="message" id="message" value="" /> <br />
+	<input type="hidden" name="id1" value="${param.id1}"/>
+	<input type="hidden" name="id2" value="${param.id2}"/>
+	<input type="submit" name="sendMessage" value="Send" />
+</form>
 
 
 
-  
-  
+
 
 
 
