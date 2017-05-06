@@ -41,4 +41,6 @@
 	</div>
 	<%@ include file="signin.jsp"%>
 	<%@ include file="signup.jsp"%>
+	<%@ include file="rightbar.jsp"%>
+	
 	

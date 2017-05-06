@@ -24,9 +24,39 @@ body, div, p, a, span, button {
 	font-family: 'Lato', sans-serif;
 	color: #212121;
 }
+
 .container {
 	padding-bottom:175px;
 }
+
+/*right bar*/
+#rightbar {
+	z-index:10;
+	position:fixed;
+	border:1px solid black;
+	height:500px;
+	width:200px;
+	background-color:white;
+	right:0;
+	bottom:0;
+	display:flex;
+	flex-direction:column;
+}
+#rightbar .title {
+	display:block;
+	width:100%;
+	text-align:center;
+}
+
+#rightbar ul {
+	color:#42B72A;
+}
+
+#rightbar ul p {
+	color:#212121;
+	font-size:15px;
+}
+
 /*header and footer style*/
 .header, .footer {
 	width: 100%;

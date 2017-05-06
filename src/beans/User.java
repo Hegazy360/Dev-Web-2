@@ -2,7 +2,7 @@ package beans;
 
 public class User {
 	String uname, password, email, image,ip;
-	int id;
+	int id,status;
 	boolean admin;
 
 	public int getId() {
@@ -59,6 +59,14 @@ public class User {
 
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int i) {
+		this.status = i;
 	}
 
 

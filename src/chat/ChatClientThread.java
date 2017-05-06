@@ -1,16 +1,24 @@
 package chat;
 
 import java.net.*;
+import java.util.ArrayList;
+
+import beans.Message;
+
 import java.io.*;
 
 public class ChatClientThread extends Thread {
 	private Socket socket = null;
 	private ChatClient client = null;
 	private DataInputStream streamIn = null;
+//	private Message messages = null;
+	private ArrayList<Message> messages = null;
 
 	public ChatClientThread(ChatClient _client, Socket _socket) {
 		client = _client;
 		socket = _socket;
+//		messages = new Message();
+		messages = new ArrayList<Message>();
 		open();
 		start();
 	}
@@ -20,7 +28,7 @@ public class ChatClientThread extends Thread {
 			streamIn = new DataInputStream(socket.getInputStream());
 		} catch (IOException ioe) {
 			System.out.println("Error getting input stream: " + ioe);
-			client.stop();
+//			client.stop(client);
 		}
 	}
 
@@ -36,11 +44,20 @@ public class ChatClientThread extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				client.handle(streamIn.readUTF());
+				client.handle(streamIn.readUTF(), getMessages());
+//				System.out.println("MESSAGES IN THREAD IS = "+getMessages().toString());
 			} catch (IOException ioe) {
 				System.out.println("Listening error: " + ioe.getMessage());
-				client.stop();
+//				client.stop(client);
 			}
 		}
+	}
+
+	public ArrayList<Message> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(ArrayList<Message> messages) {
+		this.messages = messages;
 	}
 }
