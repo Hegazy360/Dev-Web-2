@@ -93,7 +93,6 @@ public class UserController extends HttpServlet {
 				User userTmp = new User();
 				userTmp = dao.getById(Integer.parseInt(userId));
 				request.setAttribute("currentUser", userTmp);
-
 				List<User> friends= dao.getAllFriends(Integer.parseInt(userId));
 				request.setAttribute("friends", friends);
 				
@@ -101,6 +100,7 @@ public class UserController extends HttpServlet {
 				request.setAttribute("friendRequests", friendRequests);
 				List<Post> createdPosts = postsDao.getPostByAuthorId(Integer.parseInt(userId));
 				request.setAttribute("createdPosts", createdPosts);
+
 				forward = "/WEB-INF/profile.jsp";
 			}
 		}

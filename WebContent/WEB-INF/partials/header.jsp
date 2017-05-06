@@ -30,12 +30,12 @@
 			</div>
 			</c:when>
 			<c:otherwise>
-			<a href="">
-			<div class="profile-section">
-			<img class="profile-img" src="${root}/uploads/${sessionScope.user.id}${sessionScope.user.image}"/> 
-				<span class="profile-name">${sessionScope.user.uname}</span>
+			<div  class="profile-section">
+			<img class="profile-img" src="${root}/uploads/${sessionScope.user.id}${user.image}"/> 
+				<span class="profile-name">
+					<a href="user?userid=${ sessionScope.user.id }">${sessionScope.user.uname}</a>
+				</span>
 			</div>
-			</a>
 			</c:otherwise>
 		</c:choose>
 	</div>
